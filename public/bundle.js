@@ -21517,6 +21517,16 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var redirectIfLogedIn = function redirectIfLogedIn(nextState, replace, next) {
+	  console.log('Hello');
+	  next();
+	};
+
+	var requireLogin = function requireLogin(nextState, replace, next) {
+	  console.log('requireLogin');
+	  next();
+	};
+
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
 
@@ -21536,8 +21546,8 @@
 	          _reactRouter.Route,
 	          { path: '/', component: _Main2.default },
 	          _react2.default.createElement(_reactRouter.IndexRoute, { component: _TrangChu2.default }),
-	          _react2.default.createElement(_reactRouter.Route, { path: 'dangnhap', component: _DangNhap2.default }),
-	          _react2.default.createElement(_reactRouter.Route, { path: 'giaodich', component: _GiaoDich2.default })
+	          _react2.default.createElement(_reactRouter.Route, { path: 'dangnhap', onEnter: redirectIfLogedIn, component: _DangNhap2.default }),
+	          _react2.default.createElement(_reactRouter.Route, { path: 'giaodich', onEnter: requireLogin, component: _GiaoDich2.default })
 	        )
 	      );
 	    }
@@ -26507,7 +26517,7 @@
 /* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -26533,26 +26543,36 @@
 	  }
 
 	  _createClass(DangNhap, [{
-	    key: "handleSubmit",
+	    key: 'handleSubmit',
 	    value: function handleSubmit(e) {
 	      e.preventDefault();
+	      var _refs = this.refs,
+	          username = _refs.username,
+	          password = _refs.password;
+
+	      $.post('/login', {
+	        username: username.value,
+	        password: password.value
+	      }, function (response) {
+	        console.log(response);
+	      });
 	    }
 	  }, {
-	    key: "render",
+	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
-	        "form",
+	        'form',
 	        { onSubmit: this.handleSubmit.bind(this) },
-	        _react2.default.createElement("input", { type: "text", placeholder: "Username", ref: "username" }),
-	        _react2.default.createElement("br", null),
-	        _react2.default.createElement("br", null),
-	        _react2.default.createElement("input", { type: "password", placeholder: "Password", ref: "password" }),
-	        _react2.default.createElement("br", null),
-	        _react2.default.createElement("br", null),
+	        _react2.default.createElement('input', { type: 'text', placeholder: 'Username', ref: 'username' }),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('input', { type: 'password', placeholder: 'Password', ref: 'password' }),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
 	        _react2.default.createElement(
-	          "button",
-	          { type: "submit" },
-	          "\u0110\u0103ng nh\u1EADp"
+	          'button',
+	          { type: 'submit' },
+	          '\u0110\u0103ng nh\u1EADp'
 	        )
 	      );
 	    }

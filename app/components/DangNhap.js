@@ -3,6 +3,13 @@ import React from 'react';
 class DangNhap extends React.Component{
   handleSubmit(e){
     e.preventDefault();
+    var {username, password} = this.refs;
+    $.post('/login', {
+      username: username.value,
+      password: password.value
+    }, response => {
+      console.log(response);
+    })
   }
   render(){
     return (
