@@ -6,13 +6,24 @@ import GiaoDich from 'GiaoDich';
 import TrangChu from 'TrangChu';
 
 var redirectIfLogedIn = (nextState, replace, next) => {
-  console.log('Hello');
-  next();
+  $.get('/checkSignIn', data => {
+    if(data == 'true'){
+      replace('/');
+      hashHistory.push('/');
+    }
+    next();
+  });
 }
 
 var requireLogin = (nextState, replace, next) => {
-  console.log('requireLogin');
-  next();
+  $.get('/checkSignIn', data => {
+    console.log('GIAO DICH: ',data);
+    if(data != 'true'){
+      replace('/dangnhap');
+      hashHistory.push('/dangnhap');
+    }
+    next();
+  });
 }
 
 class App extends React.Component{

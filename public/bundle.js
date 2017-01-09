@@ -21518,13 +21518,24 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var redirectIfLogedIn = function redirectIfLogedIn(nextState, replace, next) {
-	  console.log('Hello');
-	  next();
+	  $.get('/checkSignIn', function (data) {
+	    if (data == 'true') {
+	      replace('/');
+	      _reactRouter.hashHistory.push('/');
+	    }
+	    next();
+	  });
 	};
 
 	var requireLogin = function requireLogin(nextState, replace, next) {
-	  console.log('requireLogin');
-	  next();
+	  $.get('/checkSignIn', function (data) {
+	    console.log('GIAO DICH: ', data);
+	    if (data != 'true') {
+	      replace('/dangnhap');
+	      _reactRouter.hashHistory.push('/dangnhap');
+	    }
+	    next();
+	  });
 	};
 
 	var App = function (_React$Component) {
@@ -26714,6 +26725,14 @@
 	  }
 
 	  _createClass(Nav, [{
+	    key: 'signOut',
+	    value: function signOut(e) {
+	      e.preventDefault();
+	      $.get('/signout', function (data) {
+	        return console.log(data);
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -26744,6 +26763,15 @@
 	            _reactRouter.Link,
 	            { to: '/dangnhap', activeClassName: 'active' },
 	            '\u0110\u0103ng nh\u1EADp'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'li',
+	          null,
+	          _react2.default.createElement(
+	            'a',
+	            { href: '/', onClick: this.signOut.bind(this) },
+	            '\u0110\u0103ng xu\u1EA5t'
 	          )
 	        )
 	      );

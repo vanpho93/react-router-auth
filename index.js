@@ -12,3 +12,4 @@ app.listen(3000, () => console.log('Server started'));
 app.get('/', (req, res) => res.render('home'));
 app.get('/checkSignIn', require('./controller/checkSignIn.js'));
 app.post('/login', require('./controller/xulyLogin'));
+app.get('/signout', require('./controller/logout.js'));
