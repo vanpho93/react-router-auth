@@ -2,7 +2,12 @@ import React from 'react';
 
 class TrangChu extends React.Component{
   render(){
-    return <h1>Trang chủ</h1>
+    return (
+      <div>
+        <h1>Trang chủ</h1>
+        <p>Khoa Pham Training</p>
+      </div>
+    )
   }
 }
 
