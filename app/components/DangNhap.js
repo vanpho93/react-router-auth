@@ -22,6 +22,9 @@ class DangNhap extends React.Component{
       </form>
     )
   }
+  componentDidMount(){
+    console.log('Dang nhap did mount');
+  }
 }
 
 module.exports = DangNhap;

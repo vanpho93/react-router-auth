@@ -12,7 +12,10 @@ module.exports = {
       GiaoDich: 'app/components/GiaoDich.js',
       Main: 'app/components/Main.js',
       Nav: 'app/components/Nav.js',
-      TrangChu: 'app/components/TrangChu.js'
+      TrangChu: 'app/components/TrangChu.js',
+      action: 'app/action.js',
+      store: 'app/store.js',
+      reducer: 'app/reducer/reducer.js'
     }
   },
   module: {
