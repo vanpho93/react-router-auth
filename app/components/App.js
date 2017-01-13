@@ -4,6 +4,8 @@ import Main from 'Main';
 import DangNhap from 'DangNhap';
 import GiaoDich from 'GiaoDich';
 import TrangChu from 'TrangChu';
+import {connect} from 'react-redux';
+import {logIn, logOut} from 'action';
 
 class App extends React.Component{
   render(){
@@ -17,6 +19,13 @@ class App extends React.Component{
       </Router>
     )
   }
+  componentDidMount(){
+    var {dispatch} = this.props;
+    $.get('/checkSignIn', data => {
+      console.log('CHECK: ', data);
+      dispatch(logIn(data.username));
+    })
+  }
 }
 
-module.exports = App;
+module.exports = connect()(App);
