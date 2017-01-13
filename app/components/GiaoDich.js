@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 class GiaoDich extends React.Component{
   render(){
@@ -9,4 +10,6 @@ class GiaoDich extends React.Component{
   }
 }
 
-module.exports = GiaoDich;
+module.exports = connect(function(state){
+  return {username: state.username}
+})(GiaoDich);

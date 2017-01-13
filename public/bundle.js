@@ -46,15 +46,32 @@
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(32);
 	var App = __webpack_require__(178);
-	var store = __webpack_require__(276);
+	var redux = __webpack_require__(245);
 
 	var _require = __webpack_require__(236),
 	    Provider = _require.Provider;
 
-	console.log(store.getState());
+	var reducer = function reducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { username: null };
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'LOG_IN':
+	      return _extends({}, state, { username: action.username });
+	    default:
+	      return state;
+	  }
+	};
+
+	var store = redux.createStore(reducer);
+	store.subscribe(function () {
+	  return console.log('subscribe: ', store.getState());
+	});
 
 	ReactDOM.render(React.createElement(
 	  Provider,
@@ -21523,6 +21540,10 @@
 
 	var _action = __webpack_require__(275);
 
+	var _store = __webpack_require__(276);
+
+	var _store2 = _interopRequireDefault(_store);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21530,6 +21551,18 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var requireLogin = function requireLogin(nextState, replace, next) {
+	  console.log('Enter middleware');
+
+	  var _store$getState = _store2.default.getState(),
+	      username = _store$getState.username;
+
+	  if (!username) {
+	    replace('/');
+	  }
+	  next();
+	};
 
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
@@ -21551,7 +21584,7 @@
 	          { path: '/', component: _Main2.default },
 	          _react2.default.createElement(_reactRouter.IndexRoute, { component: _TrangChu2.default }),
 	          _react2.default.createElement(_reactRouter.Route, { path: 'dangnhap', component: _DangNhap2.default }),
-	          _react2.default.createElement(_reactRouter.Route, { path: 'giaodich', component: _GiaoDich2.default })
+	          _react2.default.createElement(_reactRouter.Route, { path: 'giaodich', onEnter: requireLogin, component: _GiaoDich2.default })
 	        )
 	      );
 	    }
@@ -21561,8 +21594,8 @@
 	      var dispatch = this.props.dispatch;
 
 	      $.get('/checkSignIn', function (data) {
-	        console.log('CHECK: ', data);
-	        dispatch((0, _action.logIn)(data.username));
+	        console.log('CHECK: ', data.username);
+	        dispatch({ type: 'LOG_IN', username: data.username });
 	      });
 	    }
 	  }]);
@@ -21570,7 +21603,9 @@
 	  return App;
 	}(_react2.default.Component);
 
-	module.exports = (0, _reactRedux.connect)()(App);
+	module.exports = (0, _reactRedux.connect)(function (state) {
+	  return { username: state.username };
+	})(App);
 
 /***/ },
 /* 179 */
@@ -26563,11 +26598,9 @@
 	  _createClass(Nav, [{
 	    key: 'render',
 	    value: function render() {
-	      var _props = this.props,
-	          isLogin = _props.isLogin,
-	          username = _props.username;
+	      var username = this.props.username;
 
-	      var xhtml = isLogin ? _react2.default.createElement(
+	      var xhtml = username != null ? _react2.default.createElement(
 	        'li',
 	        null,
 	        _react2.default.createElement(
@@ -26605,15 +26638,7 @@
 	            'Giao d\u1ECBch'
 	          )
 	        ),
-	        _react2.default.createElement(
-	          'li',
-	          null,
-	          _react2.default.createElement(
-	            _reactRouter.Link,
-	            { to: '/dangnhap', activeClassName: 'active' },
-	            'T\xE0i kho\u1EA3n'
-	          )
-	        )
+	        xhtml
 	      );
 	    }
 	  }]);
@@ -26622,7 +26647,7 @@
 	}(_react2.default.Component);
 
 	module.exports = (0, _reactRedux.connect)(function (state) {
-	  return state;
+	  return { username: state.username };
 	})(Nav);
 
 /***/ },
@@ -28751,6 +28776,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRedux = __webpack_require__(236);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28772,6 +28799,7 @@
 	    key: 'handleSubmit',
 	    value: function handleSubmit(e) {
 	      e.preventDefault();
+	      var dispatch = this.props.dispatch;
 	      var _refs = this.refs,
 	          username = _refs.username,
 	          password = _refs.password;
@@ -28780,7 +28808,9 @@
 	        username: username.value,
 	        password: password.value
 	      }, function (response) {
-	        console.log(response);
+	        if (response.username) {
+	          dispatch({ type: 'LOG_IN', username: response.username });
+	        }
 	      });
 	    }
 	  }, {
@@ -28812,7 +28842,7 @@
 	  return DangNhap;
 	}(_react2.default.Component);
 
-	module.exports = DangNhap;
+	module.exports = (0, _reactRedux.connect)()(DangNhap);
 
 /***/ },
 /* 273 */
@@ -28825,6 +28855,8 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(236);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28862,7 +28894,9 @@
 	  return GiaoDich;
 	}(_react2.default.Component);
 
-	module.exports = GiaoDich;
+	module.exports = (0, _reactRedux.connect)(function (state) {
+	  return { username: state.username };
+	})(GiaoDich);
 
 /***/ },
 /* 274 */
@@ -28947,7 +28981,7 @@
 	  return console.log('subscribe: ', store.getState());
 	});
 
-	store.dispatch({ type: 'LOG_IN_USERNAME', username: 'vanpho93' });
+	store.dispatch({ type: 'LOG_IN', username: 'vanpho93' });
 
 	module.exports = store;
 

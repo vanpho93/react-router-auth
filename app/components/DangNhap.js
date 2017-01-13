@@ -1,14 +1,18 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 class DangNhap extends React.Component{
   handleSubmit(e){
     e.preventDefault();
+    var {dispatch} = this.props;
     var {username, password} = this.refs;
     $.post('/login', {
       username: username.value,
       password: password.value
     }, response => {
-      console.log(response);
+      if(response.username){
+        dispatch({type: 'LOG_IN', username: response.username});
+      }
     })
   }
   render(){
@@ -27,4 +31,4 @@ class DangNhap extends React.Component{
   }
 }
 
-module.exports = DangNhap;
+module.exports = connect()(DangNhap);

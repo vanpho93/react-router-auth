@@ -1,10 +1,20 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var App = require('App');
-var store = require('store');
+var redux = require('redux');
 var {Provider} = require('react-redux');
 
-console.log(store.getState());
+var reducer = (state = {username: null}, action) => {
+  switch (action.type) {
+    case 'LOG_IN':
+      return {...state, username: action.username};
+    default:
+      return state;
+  }
+}
+
+var store = redux.createStore(reducer);
+store.subscribe(() => console.log('subscribe: ', store.getState()));
 
 ReactDOM.render(
   <Provider store={store}>

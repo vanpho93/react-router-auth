@@ -6,6 +6,16 @@ import GiaoDich from 'GiaoDich';
 import TrangChu from 'TrangChu';
 import {connect} from 'react-redux';
 import {logIn, logOut} from 'action';
+import store from 'store';
+
+var requireLogin = (nextState, replace, next) => {
+  console.log('Enter middleware');
+  var {username} = store.getState();
+  if(!username){
+    replace('/');
+  }
+  next();
+}
 
 class App extends React.Component{
   render(){
@@ -14,7 +24,7 @@ class App extends React.Component{
         <Route path="/" component={Main}>
           <IndexRoute component={TrangChu}/>
           <Route path="dangnhap" component={DangNhap}/>
-          <Route path="giaodich" component={GiaoDich}/>
+          <Route path="giaodich" onEnter={requireLogin} component={GiaoDich}/>
         </Route>
       </Router>
     )
@@ -22,10 +32,12 @@ class App extends React.Component{
   componentDidMount(){
     var {dispatch} = this.props;
     $.get('/checkSignIn', data => {
-      console.log('CHECK: ', data);
-      dispatch(logIn(data.username));
+      console.log('CHECK: ', data.username);
+      dispatch({type: 'LOG_IN', username: data.username});
     })
   }
 }
 
-module.exports = connect()(App);
+module.exports = connect(function(state){
+  return {username: state.username}
+})(App);
